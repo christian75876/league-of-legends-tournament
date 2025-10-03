@@ -1,28 +1,54 @@
-// useInscriptionForm.ts
-import { useForm } from 'react-hook-form';
+'use client';
+
+import { useCallback, useMemo, useState } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  inscriptionFormSchema,
-  DEFAULT_PARTICIPANTS,
-  type InscriptionFormData,
-} from '../schemas/inscription.schema';
+import { InscriptionFormData, inscriptionFormSchema } from '../schemas/inscription.schema';
+import { submitInscription } from '../actions/inscription.action';
+
+type Status = 'idle' | 'submitting' | 'success' | 'error';
 
 export function useInscriptionForm() {
-  const methods = useForm<InscriptionFormData>({
-    resolver: zodResolver(inscriptionFormSchema),
-    mode: 'onChange',
-    defaultValues: {
+  // default de 5 jugadores
+  const defaultValues = useMemo<InscriptionFormData>(
+    () => ({
       teamName: '',
       captain: '',
       contactEmail: '',
-      participants: DEFAULT_PARTICIPANTS,
-    },
+      participants: Array.from({ length: 5 }).map(() => ({
+        summonerName: '',
+        riotId: '',
+      })),
+    }),
+    []
+  );
+
+  const methods = useForm<InscriptionFormData>({
+    mode: 'onChange', // para habilitar isValid al escribir
+    resolver: zodResolver(inscriptionFormSchema),
+    defaultValues,
   });
 
-  const onSubmit = async (data: InscriptionFormData) => {
-    console.log('Inscripción enviada:', data);
-  };
+  const [status, setStatus] = useState<Status>('idle');
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  // Devuelve por separado tu onSubmit (no lo mezcles dentro de methods)
-  return { methods, onSubmit };
+  const onSubmit: SubmitHandler<InscriptionFormData> = useCallback(
+    async (values) => {
+      setStatus('submitting');
+      setServerError(null);
+
+      const res = await submitInscription(values);
+
+      if (res.ok) {
+        setStatus('success');
+        methods.reset(defaultValues); // limpia form
+      } else {
+        setStatus('error');
+        setServerError(res.error ?? 'Error desconocido');
+      }
+    },
+    [methods, defaultValues]
+  );
+
+  return { methods, onSubmit, status, serverError };
 }
