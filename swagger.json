@@ -1,0 +1,60 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Torneo LoL API",
+        "version": "1.0.0",
+        "description": "API para gestionar torneo de League of Legends"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000/api"
+        }
+    ],
+    "paths": {
+        "/teams": {
+            "get": {
+                "summary": "Obtener todos los equipos",
+                "responses": {
+                    "200": {
+                        "description": "Lista de equipos"
+                    }
+                }
+            }
+        },
+        "/teams": {
+            "post": {
+                "summary": "Registrar nuevo equipo",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "teamName": {
+                                        "type": "string"
+                                    },
+                                    "members": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "teamName",
+                                    "members"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Equipo creado exitosamente"
+                    }
+                }
+            }
+        }
+    }
+}
