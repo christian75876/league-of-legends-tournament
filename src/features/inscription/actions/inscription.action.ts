@@ -1,43 +1,30 @@
+// src/features/inscription/actions/inscription.action.ts
 'use server';
 
-import { revalidateTag } from 'next/cache';
-import { err, ok, type Result } from '@/lib/utils/result';
+import { Prisma } from '@prisma/client';
 import { createTeamFromInscription } from '@/repositories/inscription.repository';
-import { InscriptionFormData, inscriptionFormSchema } from '../schemas/inscription.schema';
+import { AppError, type ServerActionResult } from '@/types/api.types';
+import { wrapServerAction } from '@/utils/server/server-action-error-helper';
 
-// export async function submitInscription(
-//   input: InscriptionFormData
-// ): Promise<Result<{ id: string; name: string }>> {
-//   try {
-//     const parsed = inscriptionFormSchema.safeParse(input);
-//     if (!parsed.success) {
-//       return err('Datos de inscripción inválidos');
-//     }
+type Payload = { id: string; name: string };
 
-//     const team = await createTeamFromInscription(parsed.data);
-
-//     // Si tu listado usa tag de cache, invalídalo
-//     revalidateTag('teams:list');
-
-//     return ok({ id: team.id, name: team.name });
-//   } catch (e: any) {
-//     const message =
-//       typeof e?.message === 'string' ? e.message : 'No se pudo procesar la inscripción';
-//     return err(message);
-//   }
-// }
-
-export async function submitInscription(input: InscriptionFormData) {
-  console.time('submitInscription');
-  console.log('[SA] input', JSON.stringify(input));
-  try {
+export async function submitInscription(input: any): Promise<ServerActionResult<Payload>> {
+  return wrapServerAction(async () => {
+    // (Opcional) valida aquí con Zod si no lo hiciste antes
     const team = await createTeamFromInscription(input);
-    console.log('[SA] created team', team.id);
-    console.timeEnd('submitInscription');
-    return ok({ id: team.id, name: team.name });
-  } catch (e) {
-    console.error('[SA] error', e);
-    console.timeEnd('submitInscription');
-    return err('No se pudo procesar la inscripción');
-  }
+    return { id: team.id, name: team.name };
+  }).catch((e) => {
+    // Normaliza errores aquí si quieres enriquecer mensajes
+    if (e instanceof AppError) {
+      // Puedes loguear `e.code` y `e.fieldErrors`
+      return { success: false, error: e.message };
+    }
+    if ((e as any)?.code === 'P1001' || (e as any)?.name === 'PrismaClientInitializationError') {
+      return { success: false, error: 'No se pudo conectar a la base de datos.' };
+    }
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+      return { success: false, error: 'Conflicto de unicidad.' };
+    }
+    return { success: false, error: 'No se pudo procesar la inscripción.' };
+  });
 }

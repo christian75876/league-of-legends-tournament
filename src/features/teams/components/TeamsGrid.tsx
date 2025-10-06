@@ -1,8 +1,8 @@
-// components/TeamsGrid.tsx
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import Image from 'next/image';
+import TeamsHeader from './TeamsHeader';
+import { useTeamsControls } from '../hooks/useTeamsControls';
 
 export type RegisteredTeam = {
   id: string;
@@ -33,9 +33,16 @@ export default function TeamsGrid({
   enableRosterFilter = true,
   className = '',
 }: Props) {
-  const [query, setQuery] = useState('');
-  const [sortBy, setSortBy] = useState<SortKey>(defaultSort);
-  const [filterRoster, setFilterRoster] = useState<RosterFilter>('all');
+  const {
+    query,
+    debouncedQuery,
+    sortBy,
+    filterRoster,
+    setQuery,
+    setSortBy,
+    setFilterRoster,
+    reset,
+  } = useTeamsControls(defaultSort);
 
   const filtered = useMemo(() => {
     let list = teams;
@@ -78,64 +85,18 @@ export default function TeamsGrid({
   return (
     <div className={['relative', className].join(' ')}>
       {/* Controles */}
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex gap-2">
-          {enableSearch && (
-            <div className="relative">
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar por equipo, capitán o jugador…"
-                className={[
-                  'h-11 w-72 rounded-2xl border px-4',
-                  'border-black/10 bg-white/90 text-black',
-                  'shadow-sm outline-none ring-0 focus-visible:ring-2 focus-visible:ring-emerald-400/80',
-                  'placeholder:opacity-60',
-                  'dark:border-white/10 dark:bg-white/[0.06] dark:text-white',
-                ].join(' ')}
-              />
-            </div>
-          )}
-
-          {enableRosterFilter && (
-            <select
-              value={filterRoster}
-              onChange={(e) => setFilterRoster(e.target.value as RosterFilter)}
-              className={[
-                'h-11 rounded-2xl border px-4',
-                'border-black/10 bg-white/90 text-black',
-                'shadow-sm outline-none ring-0 focus-visible:ring-2 focus-visible:ring-emerald-400/80',
-                'dark:border-white/10 dark:bg-white/[0.06] dark:text-white',
-              ].join(' ')}
-              title="Filtro por plantilla"
-            >
-              <option value="all">Todos</option>
-              <option value="exact5">Solo 5 titulares</option>
-              <option value="withSub">Con suplente</option>
-              <option value="noSub">Sin suplente</option>
-            </select>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <label className="text-sm opacity-70">Ordenar por:</label>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as SortKey)}
-            className={[
-              'h-11 rounded-2xl border px-4',
-              'border-black/10 bg-white/90 text-black',
-              'shadow-sm outline-none ring-0 focus-visible:ring-2 focus-visible:ring-emerald-400/80',
-              'dark:border-white/10 dark:bg-white/[0.06] dark:text-white',
-            ].join(' ')}
-            title="Ordenar resultados"
-          >
-            <option value="recent">Más recientes</option>
-            <option value="name">Nombre</option>
-            <option value="size">Tamaño del roster</option>
-          </select>
-        </div>
-      </div>
+      <TeamsHeader
+        enableSearch={enableSearch}
+        enableRosterFilter={enableRosterFilter}
+        query={query}
+        onQueryChange={setQuery}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
+        filterRoster={filterRoster}
+        onFilterRosterChange={setFilterRoster}
+        resultsLabel={`${filtered.length} equipo${filtered.length === 1 ? '' : 's'}`}
+        onReset={reset}
+      />
 
       {/* Grid de tarjetas */}
       <ul

@@ -36,7 +36,7 @@ export function ParticipantCard({ index }: Props) {
         />
       </FormField>
 
-      <FormField label="Riot ID (opcional)" error={pErrors?.riotId?.message} compact>
+      <FormField label="Riot ID" error={pErrors?.riotId?.message} compact>
         <Input
           placeholder="nombre#1234"
           aria-invalid={!!pErrors?.riotId}

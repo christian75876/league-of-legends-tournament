@@ -4,6 +4,7 @@ import { FormProvider } from 'react-hook-form';
 import { useInscriptionForm } from '../hooks/useInscriptionForm';
 import { TeamFields } from './TeamFields';
 import { ParticipantsList } from './ParticipantsList';
+import HeaderFrom from './HeaderFrom';
 
 export default function InscriptionForm() {
   const { methods, onSubmit } = useInscriptionForm();
@@ -19,13 +20,7 @@ export default function InscriptionForm() {
 
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)} className="relative grid gap-6 p-6 sm:p-8">
-            <header className="space-y-1">
-              <h2 className="text-2xl font-bold tracking-tight">Inscripción de equipo</h2>
-              <p className="text-sm opacity-70">
-                Completa la información del equipo y los 5 jugadores titulares.
-              </p>
-            </header>
-
+            <HeaderFrom />
             <TeamFields />
             <ParticipantsList />
 
@@ -33,15 +28,9 @@ export default function InscriptionForm() {
               <button
                 type="submit"
                 disabled={!formState.isValid || formState.isSubmitting}
-                className="group relative inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-5 py-3 font-semibold text-black transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 disabled:opacity-60"
+                className="group relative inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-5 py-3 font-semibold text-black transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70 disabled:opacity-20"
               >
                 <span>{formState.isSubmitting ? 'Enviando…' : 'Enviar inscripción'}</span>
-                <span
-                  aria-hidden
-                  className="relative -mr-1 translate-x-0 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100"
-                >
-                  →
-                </span>
               </button>
             </div>
           </form>
