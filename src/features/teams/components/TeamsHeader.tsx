@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { SlidersHorizontal, SortDesc, Search, X } from 'lucide-react';
-import type { SortKey, RosterFilter } from '../hooks/useTeamsControls';
+import { RosterFilter, SortKey } from '../hooks/useTeamsView';
+import { Select } from '@/common/components/Select';
 
 type HeadersProps = {
   enableSearch: boolean;
@@ -13,9 +14,22 @@ type HeadersProps = {
   onSortByChange: (v: SortKey) => void;
   filterRoster: RosterFilter;
   onFilterRosterChange: (v: RosterFilter) => void;
-  resultsLabel?: string; // opcional: “12 equipos”
-  onReset?: () => void; // opcional: muestra botón si existe y hay cambios
+  resultsLabel?: string;
+  onReset?: () => void;
 };
+
+const rosterOptions: { label: string; value: RosterFilter; hint?: string }[] = [
+  { label: 'Todos', value: 'all', hint: 'Mostrar todos los equipos' },
+  { label: 'Solo 5 titulares', value: 'exact5', hint: 'Sin suplente' },
+  { label: 'Con suplente', value: 'withSub', hint: 'Incluye suplente' },
+  { label: 'Sin suplente', value: 'noSub', hint: 'Solo titulares' },
+];
+
+const sortOptions: { label: string; value: SortKey; hint?: string }[] = [
+  { label: 'Más recientes', value: 'recent', hint: 'Orden por fecha de registro' },
+  { label: 'Nombre', value: 'name', hint: 'Orden alfabético A–Z' },
+  { label: 'Tamaño del roster', value: 'size', hint: 'Más jugadores primero' },
+];
 
 const TeamsHeader: React.FC<HeadersProps> = ({
   query,
@@ -34,7 +48,6 @@ const TeamsHeader: React.FC<HeadersProps> = ({
 
   return (
     <div className="mb-4 flex flex-col gap-3 sm:mb-5">
-      {/* fila superior: búsqueda + toggle filtros móvil + contador */}
       <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex w-full items-center gap-2">
           {enableSearch && (
@@ -62,7 +75,6 @@ const TeamsHeader: React.FC<HeadersProps> = ({
             </label>
           )}
 
-          {/* Filtros en móvil */}
           <button
             type="button"
             onClick={() => setShowMobileFilters((v) => !v)}
@@ -81,7 +93,6 @@ const TeamsHeader: React.FC<HeadersProps> = ({
         )}
       </div>
 
-      {/* fila de filtros + orden (colapsable en móvil) */}
       <div
         className={[
           'grid grid-cols-1 gap-2 sm:grid-cols-2',
@@ -90,17 +101,18 @@ const TeamsHeader: React.FC<HeadersProps> = ({
       >
         <div className="flex items-center gap-2 sm:col-span-2">
           {enableRosterFilter && (
-            <select
-              value={filterRoster}
-              onChange={(e) => onFilterRosterChange(e.target.value as RosterFilter)}
-              className="h-11 w-full rounded-2xl border border-black/10 bg-white/90 px-4 text-sm text-black shadow-sm outline-none ring-0 focus-visible:ring-2 focus-visible:ring-emerald-400/80 dark:border-white/10 dark:bg-white/10 dark:text-white"
-              title="Filtro por plantilla"
-            >
-              <option value="all">Todos</option>
-              <option value="exact5">Solo 5 titulares</option>
-              <option value="withSub">Con suplente</option>
-              <option value="noSub">Sin suplente</option>
-            </select>
+            <div className="w-full">
+              <Select<RosterFilter>
+                label="Plantilla"
+                value={filterRoster}
+                onChange={(v) => onFilterRosterChange(v)}
+                options={rosterOptions}
+              />
+              {/* hint debajo */}
+              <p className="mt-1 text-xs opacity-70">
+                {rosterOptions.find((o) => o.value === filterRoster)?.hint}
+              </p>
+            </div>
           )}
 
           {showReset && (
@@ -118,16 +130,19 @@ const TeamsHeader: React.FC<HeadersProps> = ({
           <label className="hidden text-xs opacity-70 sm:block">Ordenar por:</label>
           <div className="relative">
             <SortDesc className="pointer-events-none absolute right-3 top-1/2 hidden h-4 w-4 -translate-y-1/2 opacity-60 sm:block" />
-            <select
-              value={sortBy}
-              onChange={(e) => onSortByChange(e.target.value as SortKey)}
-              className="h-11 w-full min-w-[12rem] rounded-2xl border border-black/10 bg-white/90 px-4 text-sm text-black shadow-sm outline-none ring-0 focus-visible:ring-2 focus-visible:ring-emerald-400/80 dark:border-white/10 dark:bg-white/10 dark:text-white"
-              title="Ordenar resultados"
-            >
-              <option value="recent">Más recientes</option>
-              <option value="name">Nombre</option>
-              <option value="size">Tamaño del roster</option>
-            </select>
+            <div className="w-full">
+              <Select<SortKey>
+                label="Ordenar por"
+                value={sortBy}
+                onChange={(v) => onSortByChange(v)}
+                options={sortOptions}
+                // rightIcon={<SortDesc className="h-4 w-4" />}
+              />
+              {/* hint debajo */}
+              <p className="mt-1 text-xs opacity-70">
+                {sortOptions.find((o) => o.value === sortBy)?.hint}
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -3,7 +3,6 @@
 import 'swagger-ui-react/swagger-ui.css';
 import swaggerSpec from '../../../swagger.json';
 import dynamic from 'next/dynamic';
-import { div } from 'framer-motion/client';
 
 const SwaggerUI = dynamic(() => import('swagger-ui-react'), {
   ssr: false,
@@ -25,7 +24,7 @@ export default function ApiDocsPage() {
           </p>
         </header>
         <div className="rounded-lg bg-white shadow-sm">
-          <SwaggerUI url="/swagger.json" docExpansion="list" defaultModelExpandDepth={1} />
+          <SwaggerUI spec={swaggerSpec} docExpansion="list" defaultModelExpandDepth={1} />
         </div>
       </div>
     </div>

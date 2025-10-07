@@ -39,7 +39,6 @@ export function useInscriptionForm() {
       setServerError(null);
 
       const res = await submitInscription(values);
-      console.log('[H] submitInscription result', res);
 
       if (res.success) {
         setStatus('success');

@@ -1,16 +1,16 @@
 'use client';
 import { ClipboardList, PlaySquare, Trophy, Users } from 'lucide-react';
 import CenteredNavButtons from '../components/CenteredNavButtons';
-import { useScrollTrigger } from '../hooks/useScrollTigger';
 import BladeSlashSwap from '../components/BladeSlashSwap';
 import Tournamnet from '../components/Tournamnet';
 import { NAV_ITEMS } from '@/common/constants/constants';
+import { useScrollTrigger } from '../hooks/useScrollTigger';
 
 export const TournamentContainer = () => {
-  const { ref, isScrolling } = useScrollTrigger();
+  const { isScrolling } = useScrollTrigger({ target: 'window', resetAfter: 300 });
 
   return (
-    <div ref={ref}>
+    <div className="min-h-screen">
       <BladeSlashSwap
         showB={isScrolling}
         angleDeg={135}

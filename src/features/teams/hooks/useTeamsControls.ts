@@ -1,8 +1,5 @@
-// hooks/useTeamsControls.ts
 import { useEffect, useState } from 'react';
-
-export type SortKey = 'name' | 'recent' | 'size';
-export type RosterFilter = 'all' | 'exact5' | 'withSub' | 'noSub';
+import { RosterFilter, SortKey } from './useTeamsView';
 
 export function useTeamsControls(defaultSort: SortKey = 'recent') {
   const [query, setQuery] = useState('');
@@ -10,7 +7,6 @@ export function useTeamsControls(defaultSort: SortKey = 'recent') {
   const [sortBy, setSortBy] = useState<SortKey>(defaultSort);
   const [filterRoster, setFilterRoster] = useState<RosterFilter>('all');
 
-  // debounce para búsqueda más fluida (móvil/desktop)
   useEffect(() => {
     const id = setTimeout(() => setDebouncedQuery(query), 250);
     return () => clearTimeout(id);
@@ -23,16 +19,13 @@ export function useTeamsControls(defaultSort: SortKey = 'recent') {
   };
 
   return {
-    // state
     query,
     debouncedQuery,
     sortBy,
     filterRoster,
-    // setters
     setQuery,
     setSortBy,
     setFilterRoster,
-    // helpers
     reset,
   };
 }
