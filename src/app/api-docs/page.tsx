@@ -25,7 +25,7 @@ export default function ApiDocsPage() {
           </p>
         </header>
         <div className="rounded-lg bg-white shadow-sm">
-          <SwaggerUI url="/swagger.json" docExpansion="list" defaultModelExpandDepth={1} />
+          <SwaggerUI spec={swaggerSpec} docExpansion="list" defaultModelExpandDepth={1} />
         </div>
       </div>
     </div>
