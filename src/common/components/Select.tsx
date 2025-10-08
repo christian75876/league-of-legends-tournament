@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { ChevronDown, Check } from 'lucide-react';
+import { ChevronDown, Check, ChevronUp } from 'lucide-react';
 
 type Option<V extends string = string> = { label: string; value: V };
 
@@ -55,7 +55,9 @@ export function Select<V extends string = string>({
         <span className="truncate">{selected?.label}</span>
         <span className="ml-2 inline-flex items-center gap-1 opacity-70">
           {rightIcon}
-          <ChevronDown className="h-4 w-4" />
+          <span className={`transition-transform duration-300 ${open ? 'rotate-180' : 'rotate-0'}`}>
+            <ChevronDown className="h-4 w-4" />
+          </span>{' '}
         </span>
       </button>
 
@@ -64,7 +66,7 @@ export function Select<V extends string = string>({
           ref={listRef}
           role="listbox"
           tabIndex={-1}
-          className="z-50 mt-2 max-h-64 w-full overflow-auto rounded-xl border border-black/10 bg-white/95 p-1 shadow-lg backdrop-blur-sm dark:border-white/10 dark:bg-black/60"
+          className="absolute z-50 mt-2 max-h-64 w-full overflow-auto rounded-xl border border-black/10 bg-white/60 p-1 shadow-lg backdrop-blur-sm dark:border-white/10 dark:bg-black/70"
         >
           {options.map((o) => {
             const active = o.value === value;

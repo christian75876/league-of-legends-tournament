@@ -41,8 +41,8 @@ const TeamsCard: React.FC<TeamsCardProps> = ({ teams }) => {
               </div>
 
               <ul className="mt-1 grid grid-cols-1 gap-1 text-xs sm:grid-cols-2">
-                {t.players.map((p) => (
-                  <li key={p} className="truncate leading-tight">
+                {t.players.map((p, i) => (
+                  <li key={`${t.id}-player-${i}`} className="truncate leading-tight">
                     • {p}
                   </li>
                 ))}

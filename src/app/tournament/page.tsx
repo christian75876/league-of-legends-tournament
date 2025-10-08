@@ -1,3 +1,4 @@
+import BrandLoader from '@/common/components/BrandLoader';
 import { TournamentContainer } from '@/features/tournament/containers/TournamentContainer';
 
 export const metadata = {
@@ -7,4 +8,5 @@ export const metadata = {
 
 export default function TournamentPage() {
   return <TournamentContainer />;
+  // return <BrandLoader />;
 }
