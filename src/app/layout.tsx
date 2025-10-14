@@ -12,15 +12,29 @@ export const metadata: Metadata = {
     template: '%s | Torneo LoL',
   },
   description: 'Torneo de League of Legends. Transmisión en vivo, posiciones y más.',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
   openGraph: {
     siteName: 'Torneo LoL',
     type: 'website',
-    images: ['/og/site-default.jpg'],
+    images: [
+      {
+        url: '/icon-512x512.png',
+        width: 512,
+        height: 512,
+        alt: 'Logo Mi Torneo',
+      },
+    ],
     locale: 'es_CO',
   },
   twitter: {
     card: 'summary_large_image',
-    images: ['/og/site-default.jpg'],
+    title: 'Mi Torneo',
+    description: 'Organiza, juega y sigue tus torneos fácilmente.',
+    images: ['/icon-512x512.png'],
   },
   robots: { index: true, follow: true },
 };

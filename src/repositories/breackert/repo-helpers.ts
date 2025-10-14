@@ -19,12 +19,10 @@ export const matchWithRels = Prisma.validator<Prisma.MatchDefaultArgs>()({
 });
 export type MatchWithRels = Prisma.MatchGetPayload<typeof matchWithRels>;
 
-export function computeScore(games: Array<{ winnerSide: 'A' | 'B' | null }>): {
-  a: number;
-  b: number;
-} {
-  let a = 0,
-    b = 0;
+// src/features/bracket/repo-helpers.ts
+
+export function computeScore(games: Array<{ winnerSide: 'A' | 'B' | null }>) {
+  let a = 0, b = 0;
   for (const g of games) {
     if (g.winnerSide === 'A') a++;
     else if (g.winnerSide === 'B') b++;
@@ -35,7 +33,13 @@ export function computeScore(games: Array<{ winnerSide: 'A' | 'B' | null }>): {
 export function toMatchUI(m: MatchWithRels): MatchUI {
   const A = m.participants.find((p) => p.side === 'A')?.team ?? null;
   const B = m.participants.find((p) => p.side === 'B')?.team ?? null;
-  const score = computeScore(m.games as any); // games cumple el shape anterior
+
+  // 👇 convierte string|null -> 'A'|'B'|null de forma segura
+  const score = computeScore(
+    m.games.map((g) => ({
+      winnerSide: g.winnerSide === 'A' ? 'A' : g.winnerSide === 'B' ? 'B' : null,
+    }))
+  );
 
   return {
     id: m.id,
@@ -48,6 +52,7 @@ export function toMatchUI(m: MatchWithRels): MatchUI {
     score,
   };
 }
+
 
 export function toRoundsUI(matches: MatchWithRels[]): RoundBucket[] {
   const by = new Map<number, MatchWithRels[]>();

@@ -28,7 +28,7 @@ export async function getLatestBracket(): Promise<{
   if (!t) throw new AppError('NOT_FOUND', 'No hay torneos');
   return {
     tournament: { id: t.id, name: t.name, slug: t.slug },
-    rounds: toRoundsUI(t.matches as any),
+    rounds: toRoundsUI(t.matches),
   };
 }
 
@@ -116,7 +116,7 @@ export async function generateFromRegistrations(opts?: {
     }
 
     // 4) IDs sin duplicados
-    let teamIds = Array.from(new Set(regs.map((r) => r.team.id)));
+    const teamIds = Array.from(new Set(regs.map((r) => r.team.id)));
 
     // 5) Shuffle si corresponde
     if (seedStrategy === 'random') {

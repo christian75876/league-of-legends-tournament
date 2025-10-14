@@ -6,13 +6,10 @@ import { revalidatePath } from 'next/cache';
 import { wrapServerAction } from '@/utils/server/server-action-error-helper';
 import { AppError, type ServerActionResult } from '@/types/api.types';
 import {
-  GenerateBracketInput,
   MatchDTO,
   PatchMatchInput,
   ReportMatchInput,
-  RoundBucketDTO,
 } from '@/repositories/breackert/breackert.dto';
-import { patchMatch, reportMatch } from '@/repositories/breackert/match.repository';
 import { RoundBucket } from '../types/bracket.types';
 import { getLatestBracket } from '@/repositories/breackert/bracket.repository';
 
@@ -93,50 +90,50 @@ export async function getLatestBracketAction(): Promise<ServerActionResult<Lates
 // =====================================
 // 3) POST report match (games o directo)
 // =====================================
-export async function reportMatchAction(
-  matchId: string,
-  body: ReportMatchInput,
-  opts?: { slugToRevalidate?: string } // por si quieres revalidar la vista del torneo
-): Promise<ServerActionResult<MatchDTO>> {
-  return wrapServerAction(async () => {
-    const dto = await reportMatch(matchId, body);
-    if (opts?.slugToRevalidate) {
-      revalidatePath(`/t/${opts.slugToRevalidate}`);
-      revalidatePath(`/t/${opts.slugToRevalidate}/bracket`);
-    }
-    return dto;
-  }).catch((e: unknown) => {
-    if (e instanceof AppError) return { success: false, error: e.message };
-    if (isPrismaConnectionError(e) || isPrismaInitError(e)) {
-      return { success: false, error: 'No se pudo conectar a la base de datos.' };
-    }
-    return { success: false, error: 'No se pudo reportar el resultado.' };
-  });
-}
+// export async function reportMatchAction(
+//   matchId: string,
+//   body: ReportMatchInput,
+//   opts?: { slugToRevalidate?: string } // por si quieres revalidar la vista del torneo
+// ): Promise<ServerActionResult<MatchDTO>> {
+//   return wrapServerAction(async () => {
+//     const dto = await reportMatch(matchId, body);
+//     if (opts?.slugToRevalidate) {
+//       revalidatePath(`/t/${opts.slugToRevalidate}`);
+//       revalidatePath(`/t/${opts.slugToRevalidate}/bracket`);
+//     }
+//     return dto;
+//   }).catch((e: unknown) => {
+//     if (e instanceof AppError) return { success: false, error: e.message };
+//     if (isPrismaConnectionError(e) || isPrismaInitError(e)) {
+//       return { success: false, error: 'No se pudo conectar a la base de datos.' };
+//     }
+//     return { success: false, error: 'No se pudo reportar el resultado.' };
+//   });
+// }
 
-// =====================================
-// 4) PATCH match (status/agenda/stream/bestOf)
-// =====================================
-export async function patchMatchAction(
-  matchId: string,
-  body: PatchMatchInput,
-  opts?: { slugToRevalidate?: string }
-): Promise<ServerActionResult<MatchDTO>> {
-  return wrapServerAction(async () => {
-    const dto = await patchMatch(matchId, body);
-    if (opts?.slugToRevalidate) {
-      revalidatePath(`/t/${opts.slugToRevalidate}`);
-      revalidatePath(`/t/${opts.slugToRevalidate}/bracket`);
-    }
-    return dto;
-  }).catch((e: unknown) => {
-    if (e instanceof AppError) return { success: false, error: e.message };
-    if (isPrismaConnectionError(e) || isPrismaInitError(e)) {
-      return { success: false, error: 'No se pudo conectar a la base de datos.' };
-    }
-    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
-      return { success: false, error: 'Conflicto de unicidad.' };
-    }
-    return { success: false, error: 'No se pudo actualizar el match.' };
-  });
-}
+// // =====================================
+// // 4) PATCH match (status/agenda/stream/bestOf)
+// // =====================================
+// export async function patchMatchAction(
+//   matchId: string,
+//   body: PatchMatchInput,
+//   opts?: { slugToRevalidate?: string }
+// ): Promise<ServerActionResult<MatchDTO>> {
+//   return wrapServerAction(async () => {
+//     const dto = await patchMatch(matchId, body);
+//     if (opts?.slugToRevalidate) {
+//       revalidatePath(`/t/${opts.slugToRevalidate}`);
+//       revalidatePath(`/t/${opts.slugToRevalidate}/bracket`);
+//     }
+//     return dto;
+//   }).catch((e: unknown) => {
+//     if (e instanceof AppError) return { success: false, error: e.message };
+//     if (isPrismaConnectionError(e) || isPrismaInitError(e)) {
+//       return { success: false, error: 'No se pudo conectar a la base de datos.' };
+//     }
+//     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+//       return { success: false, error: 'Conflicto de unicidad.' };
+//     }
+//     return { success: false, error: 'No se pudo actualizar el match.' };
+//   });
+// }
