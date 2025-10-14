@@ -74,13 +74,13 @@ export default function BracketPage() {
             maxHeight={isMobile ? undefined : 560}
           />{' '}
         </section>
-        <button
+        {/* <button
           type="button"
           onClick={handleGenerate}
           className="rounded-md border border-white/10 px-3 py-1 text-sm hover:bg-white/10"
         >
           Generar R1 (auto)
-        </button>
+        </button> */}
       </div>
     </main>
   );
