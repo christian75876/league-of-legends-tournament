@@ -11,7 +11,7 @@ export default function InscriptionForm() {
   const { handleSubmit, formState } = methods;
 
   return (
-    <div className="flex w-full items-center justify-center p-6 md:p-10">
+    <div className="flex w-full items-center justify-center">
       <div className="relative w-full max-w-5xl rounded-3xl border border-white/10 bg-white/60 shadow-[0_10px_30px_rgba(0,0,0,0.10)] backdrop-blur-md dark:border-white/10 dark:bg-white/5">
         <div
           aria-hidden

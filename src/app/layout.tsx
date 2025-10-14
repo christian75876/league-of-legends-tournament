@@ -35,7 +35,7 @@ export default function RootLayout({
       <body className={`antialiased [font-family:'Press_Start_2P']`}>
         <SmokeBackground />
         <NavGate />
-        {children}
+        <div className="px-4 sm:p-0">{children}</div>
         <Toaster richColors position="top-right" />
       </body>
     </html>

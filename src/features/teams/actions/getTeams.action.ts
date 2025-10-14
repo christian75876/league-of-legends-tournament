@@ -1,4 +1,3 @@
-// services/teams.ts
 'use server';
 
 import { wrapServerAction } from '@/utils/server/server-action-error-helper';

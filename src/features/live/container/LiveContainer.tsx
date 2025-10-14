@@ -7,7 +7,7 @@ const LiveContainer = () => {
   const youtubeVideoId = process.env.NEXT_PUBLIC_YT_VIDEO_ID || ''; // opcional (respaldo)
 
   return (
-    <main className="flex min-h-screen w-full items-center justify-center p-6 md:p-10">
+    <main className="flex w-full items-center justify-center">
       <div
         className={[
           'relative w-full max-w-5xl rounded-3xl border',

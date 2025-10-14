@@ -8,7 +8,15 @@ export type ServerErrorCode =
   | 'TEAM_NAME_TAKEN'
   | 'RIOT_ID_EMPTY'
   | 'INVALID_ROSTER_SIZE'
-  | 'SERVER_ERROR';
+  | 'SERVER_ERROR'
+  | 'NOT_FOUND'
+  | 'ALREADY_EXISTS'
+  | 'BAD_REQUEST'
+  | 'INVALID_BESTOF'
+  | 'INVALID_GAME_INDEX'
+  | 'NOT_ENOUGH_TEAMS'
+  | 'FORBIDDEN'
+  | 'CONFLICT';
 
 export class AppError extends Error {
   code: ServerErrorCode;

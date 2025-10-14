@@ -8,7 +8,7 @@ export type NavItem = {
 
 export const NAV_ITEMS: NavItem[] = [
   { href: '/inscription', label: 'Inscripción', icon: ClipboardList },
-  { href: '/positions', label: 'Tabla de posiciones', icon: Trophy },
+  { href: '/bracket', label: 'Tabla de combates', icon: Trophy },
   { href: '/live', label: 'Transmisión en vivo', icon: PlaySquare },
   { href: '/teams', label: 'Equipos inscritos', icon: Users },
 ];
