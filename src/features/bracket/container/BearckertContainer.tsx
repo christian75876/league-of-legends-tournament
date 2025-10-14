@@ -26,9 +26,9 @@ export default function BracketPage() {
         bestOf: 1,
       });
       await refetch();
-    } catch (e: any) {
-      console.error(e?.message ?? e);
-      alert(e?.message ?? 'No se pudo generar R1');
+    } catch (e: unknown) {
+      console.error(e ?? e);
+      alert(e ?? 'No se pudo generar R1');
     }
   }
 
