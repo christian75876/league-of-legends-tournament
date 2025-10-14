@@ -13,8 +13,8 @@ type Props = {
 };
 
 export default function TournamentNav({
-  startDate = '12 Oct 2025',
-  schedule = 'Sáb/Dom 6–9 pm (GMT-5)',
+  startDate = '01 Nov 2025',
+  schedule = 'Sáb/Dom 6–9 pm',
   items = NAV_ITEMS,
 }: Props) {
   const pathname = usePathname() || '/';

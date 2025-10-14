@@ -3,7 +3,12 @@ import LiveStreamCard from '../components/LiveStreamCard';
 
 const LiveContainer = () => {
   // Ajusta estos valores o usa variables de entorno:
-  const kickChannel = process.env.NEXT_PUBLIC_KICK_CHANNEL || 'tu_canal'; // <- cambia por tu canal
+  const raw = process.env.NEXT_PUBLIC_KICK_CHANNEL || 'https://kick.com/escenamuerta';
+  const kickChannel = raw
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .replace(/^kick\.com\//, '')
+    .trim(); // <- cambia por tu canal
   const youtubeVideoId = process.env.NEXT_PUBLIC_YT_VIDEO_ID || ''; // opcional (respaldo)
 
   return (

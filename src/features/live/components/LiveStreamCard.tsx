@@ -14,6 +14,18 @@ type Props = {
   className?: string;
 };
 
+
+const ghostBtn = [
+  'inline-flex h-10 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-semibold',
+  'border border-black/10 bg-white/90 shadow-sm',
+  // hover consistente
+  'transition hover:bg-emerald-500/10 hover:ring-1 hover:ring-emerald-400/40',
+  // focus
+  'focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70',
+  // dark
+  'dark:border-white/10 dark:bg-white/[0.06] dark:text-white dark:hover:bg-emerald-400/10',
+].join(' ');
+
 type Source = 'kick' | 'youtube';
 
 export default function LiveStreamCard({
@@ -27,7 +39,7 @@ export default function LiveStreamCard({
   const hasYouTube = Boolean(youtubeVideoId);
 
   const kickPlayerSrc = useMemo(
-    () => `https://player.kick.com/${encodeURIComponent(kickChannel)}`,
+    () => `https://player.kick.com/${encodeURIComponent(kickChannel)}?autoplay=true&muted=true`,
     [kickChannel]
   );
 
@@ -61,17 +73,7 @@ export default function LiveStreamCard({
               ...(hasYouTube ? [{ value: 'youtube', label: 'YouTube' as const }] : []),
             ]}
           />
-          <button
-            type="button"
-            onClick={() => setShowChat((s) => !s)}
-            className={[
-              'h-10 rounded-2xl px-4 text-sm font-semibold',
-              'border border-black/10 bg-white/90 shadow-sm',
-              'transition hover:bg-white',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70',
-              'dark:border-white/10 dark:bg-white/[0.06] dark:text-white',
-            ].join(' ')}
-          >
+          <button type="button" onClick={() => setShowChat((s) => !s)} className={ghostBtn}>
             {showChat ? 'Ocultar chat' : 'Mostrar chat'}
           </button>
         </div>
@@ -79,17 +81,7 @@ export default function LiveStreamCard({
         {/* Acciones */}
         <div className="flex items-center gap-2">
           {isKick && (
-            <Link
-              href={`https://kick.com/${kickChannel}`}
-              target="_blank"
-              className={[
-                'inline-flex h-10 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-semibold',
-                'border border-black/10 bg-white/90 shadow-sm',
-                'transition hover:bg-white',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70',
-                'dark:border-white/10 dark:bg-white/[0.06] dark:text-white',
-              ].join(' ')}
-            >
+            <Link href={`https://kick.com/${kickChannel}`} target="_blank" className={ghostBtn}>
               Abrir en Kick ↗
             </Link>
           )}
@@ -97,13 +89,7 @@ export default function LiveStreamCard({
             <Link
               href={`https://youtube.com/watch?v=${youtubeVideoId}`}
               target="_blank"
-              className={[
-                'inline-flex h-10 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-semibold',
-                'border border-black/10 bg-white/90 shadow-sm',
-                'transition hover:bg-white',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70',
-                'dark:border-white/10 dark:bg-white/[0.06] dark:text-white',
-              ].join(' ')}
+              className={ghostBtn}
             >
               Abrir en YouTube ↗
             </Link>
@@ -130,11 +116,11 @@ export default function LiveStreamCard({
             {playerSrc ? (
               <iframe
                 src={playerSrc}
-                allow="autoplay; encrypted-media; picture-in-picture"
+                allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                 allowFullScreen
                 loading="lazy"
                 className="absolute inset-0 h-full w-full rounded-2xl"
-                title={isKick ? `Kick: ${kickChannel}` : 'YouTube player'}
+                title={`Kick: ${kickChannel}`}
               />
             ) : (
               <EmptyState
@@ -145,22 +131,25 @@ export default function LiveStreamCard({
           </Aspect>
         </div>
 
-        {/* Chat (solo Kick) */}
         {showChat && isKick && (
           <div
             className={[
-              'relative overflow-hidden rounded-2xl border',
+              'relative rounded-2xl border',
               'border-black/10 bg-white/90 shadow-sm',
               'dark:border-white/10 dark:bg-white/[0.06]',
             ].join(' ')}
           >
-            <div className="h-[460px]">
+            <div className="relative h-[450px] overflow-hidden [clip-path:inset(0_0_72px_0)]">
               <iframe
                 src={kickChatSrc}
                 className="h-full w-full"
                 loading="lazy"
                 title={`Chat de ${kickChannel}`}
               />
+            </div>
+
+            <div className="pointer-events-auto absolute bottom-16 left-0 right-0 flex h-20 items-center justify-between gap-2 rounded-b-2xl bg-gradient-to-t from-white to-transparent p-2 text-xs dark:from-black">
+              <span className="opacity-70">Chat en modo lectura</span>
             </div>
           </div>
         )}
