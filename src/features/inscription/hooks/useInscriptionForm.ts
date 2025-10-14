@@ -5,6 +5,7 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { InscriptionFormData, inscriptionFormSchema } from '../schemas/inscription.schema';
 import { submitInscription } from '../actions/inscription.action';
+import { toast } from 'sonner';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -24,7 +25,7 @@ export function useInscriptionForm() {
   );
 
   const methods = useForm<InscriptionFormData>({
-    mode: 'onChange', // para habilitar isValid al escribir
+    mode: 'onChange',
     resolver: zodResolver(inscriptionFormSchema),
     defaultValues,
   });
@@ -39,12 +40,14 @@ export function useInscriptionForm() {
 
       const res = await submitInscription(values);
 
-      if (res.ok) {
+      if (res.success) {
         setStatus('success');
         methods.reset(defaultValues); // limpia form
+        toast.success('¡Inscripción enviada con éxito!');
       } else {
         setStatus('error');
         setServerError(res.error ?? 'Error desconocido');
+        toast.error(res.error ?? 'Error desconocido');
       }
     },
     [methods, defaultValues]

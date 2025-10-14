@@ -20,6 +20,18 @@ async function main() {
     create: { name: "LoL Open", slug: "lol-open", allowSolo: true, maxTeams: 32 }
   });
 
+  await prisma.tournament.upsert({
+    where: { slug: 'mi-torneo' },
+    update: {},
+    create: {
+      name: 'Mi Torneo',
+      slug: 'mi-torneo',
+      maxTeams: 32,
+      allowSolo: true,
+    },
+  });
+  console.log('Seed listo: torneo mi-torneo');
+
   console.log("Seed listo");
 }
 

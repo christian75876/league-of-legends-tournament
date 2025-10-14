@@ -1,60 +1,558 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-        "title": "Torneo LoL API",
-        "version": "1.0.0",
-        "description": "API para gestionar torneo de League of Legends"
-    },
-    "servers": [
-        {
-            "url": "http://localhost:3000/api"
-        }
-    ],
-    "paths": {
-        "/teams": {
-            "get": {
-                "summary": "Obtener todos los equipos",
-                "responses": {
-                    "200": {
-                        "description": "Lista de equipos"
-                    }
-                }
-            }
-        },
-        "/teams": {
-            "post": {
-                "summary": "Registrar nuevo equipo",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "teamName": {
-                                        "type": "string"
-                                    },
-                                    "members": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    }
-                                },
-                                "required": [
-                                    "teamName",
-                                    "members"
-                                ]
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Equipo creado exitosamente"
-                    }
-                }
-            }
-        }
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Torneo LoL API",
+    "version": "1.0.0",
+    "description": "API para gestionar torneo de League of Legends"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Servidor de desarrollo"
     }
+  ],
+  "paths": {
+    "/inscriptions": {
+      "post": {
+        "tags": ["Inscriptions"],
+        "summary": "Inscribir equipo completo",
+        "description": "Crea un equipo completo con capitán y jugadores (5 titulares + 1 suplente opcional). El capitán y los jugadores se crean automáticamente si no existen.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "teamName": {
+                    "type": "string",
+                    "minLength": 2,
+                    "example": "Dragon Souls",
+                    "description": "Nombre del equipo (único)"
+                  },
+                  "captain": {
+                    "type": "string",
+                    "minLength": 2,
+                    "example": "MidMasterCO",
+                    "description": "Summoner Name del capitán"
+                  },
+                  "contactEmail": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "capitan@email.com",
+                    "description": "Email de contacto del capitán"
+                  },
+                  "participants": {
+                    "type": "array",
+                    "minItems": 5,
+                    "maxItems": 6,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "summonerName": {
+                          "type": "string",
+                          "minLength": 2,
+                          "example": "TopLanerPro"
+                        },
+                        "riotId": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "LAN#1234"
+                        }
+                      },
+                      "required": ["summonerName"]
+                    },
+                    "description": "Lista de 5 jugadores titulares (y opcionalmente 1 suplente). Todos los Summoner Names deben ser únicos y diferentes al capitán."
+                  }
+                },
+                "required": ["teamName", "captain", "contactEmail", "participants"],
+                "example": {
+                  "teamName": "Dragon Souls",
+                  "captain": "MidMasterCO",
+                  "contactEmail": "capitan@dragonsouls.com",
+                  "participants": [
+                    {
+                      "summonerName": "TopLanerPro",
+                      "riotId": "LAN#1001"
+                    },
+                    {
+                      "summonerName": "JungleKing",
+                      "riotId": "LAN#1002"
+                    },
+                    {
+                      "summonerName": "ADCCarry",
+                      "riotId": "LAN#1003"
+                    },
+                    {
+                      "summonerName": "SupportGod",
+                      "riotId": "LAN#1004"
+                    },
+                    {
+                      "summonerName": "SubPlayer",
+                      "riotId": "LAN#1005"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Equipo inscrito exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "team": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "clxxx123456789"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Dragon Souls"
+                        },
+                        "captain": {
+                          "$ref": "#/components/schemas/Player"
+                        },
+                        "members": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/TeamMember"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de inscripción inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Datos de inscripción inválidos"
+                    },
+                    "details": {
+                      "type": "object",
+                      "description": "Detalles de los errores de validación de Zod"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al procesar la inscripción",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Ya existe un equipo con ese nombre"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/teams": {
+      "get": {
+        "tags": ["Teams"],
+        "summary": "Obtener todos los equipos",
+        "description": "Retorna una lista con todos los equipos registrados, incluyendo información del capitán y miembros",
+        "responses": {
+          "200": {
+            "description": "Lista de equipos obtenida exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TeamWithDetails"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Teams"],
+        "summary": "Crear nuevo equipo",
+        "description": "Crea un nuevo equipo con un capitán",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Dragon Souls"
+                  },
+                  "captainId": {
+                    "type": "string",
+                    "example": "clxxx123456789"
+                  },
+                  "logoUrl": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": "https://example.com/logo.png"
+                  }
+                },
+                "required": ["name", "captainId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Equipo creado exitosamente"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          },
+          "404": {
+            "description": "Capitán no encontrado"
+          },
+          "409": {
+            "description": "Ya existe un equipo con ese nombre"
+          }
+        }
+      }
+    },
+    "/players": {
+      "post": {
+        "tags": ["Players"],
+        "summary": "Crear nuevo jugador",
+        "description": "Registra un nuevo jugador en el sistema",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "NombreJugador"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "jugador@email.com"
+                  },
+                  "discord": {
+                    "type": "string",
+                    "example": "usuario#1234"
+                  },
+                  "rolePreference": {
+                    "type": "string",
+                    "enum": ["top", "jungle", "mid", "adc", "support"],
+                    "example": "mid"
+                  }
+                },
+                "required": ["name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Jugador creado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Player"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos inválidos"
+          }
+        }
+      }
+    },
+    "/admin/tournaments": {
+      "post": {
+        "tags": ["Admin - Tournaments"],
+        "summary": "Crear nuevo torneo (Solo Admin)",
+        "description": "Crea un nuevo torneo. Requiere autenticación de administrador",
+        "security": [
+          {
+            "adminAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Torneo de Verano 2025"
+                  },
+                  "slug": {
+                    "type": "string",
+                    "example": "verano-2025"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Torneo competitivo de League of Legends"
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-06-01T00:00:00Z"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-06-30T23:59:59Z"
+                  },
+                  "maxTeams": {
+                    "type": "integer",
+                    "example": 32
+                  },
+                  "allowSolo": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "streamUrl": {
+                    "type": "string",
+                    "example": "https://kick.com/canal"
+                  }
+                },
+                "required": ["name", "slug"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Torneo creado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tournament"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No autorizado - Se requiere autenticación de administrador"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Team": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "clxxx123456789"
+          },
+          "name": {
+            "type": "string",
+            "example": "Dragon Souls"
+          },
+          "captainId": {
+            "type": "string",
+            "example": "clxxx987654321"
+          },
+          "logoUrl": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://example.com/logo.png"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TeamWithDetails": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Team"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "captain": {
+                "$ref": "#/components/schemas/Player"
+              },
+              "members": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TeamMember"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TeamMember": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "clxxx123456789"
+          },
+          "teamId": {
+            "type": "string"
+          },
+          "playerId": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["STARTER", "SUBSTITUTE"],
+            "example": "STARTER"
+          },
+          "joinedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "player": {
+            "$ref": "#/components/schemas/Player"
+          }
+        }
+      },
+      "Player": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "clxxx123456789"
+          },
+          "name": {
+            "type": "string",
+            "example": "NombreJugador"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "nullable": true,
+            "example": "jugador@email.com"
+          },
+          "discord": {
+            "type": "string",
+            "nullable": true,
+            "example": "usuario#1234"
+          },
+          "rolePreference": {
+            "type": "string",
+            "nullable": true,
+            "example": "mid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Tournament": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "clxxx123456789"
+          },
+          "name": {
+            "type": "string",
+            "example": "Torneo de Verano 2025"
+          },
+          "slug": {
+            "type": "string",
+            "example": "verano-2025"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "example": "Torneo competitivo de League of Legends"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "maxTeams": {
+            "type": "integer",
+            "example": 32
+          },
+          "allowSolo": {
+            "type": "boolean",
+            "example": true
+          },
+          "streamUrl": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://kick.com/canal"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "adminAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Autenticación JWT para administradores"
+      }
+    }
+  }
 }
