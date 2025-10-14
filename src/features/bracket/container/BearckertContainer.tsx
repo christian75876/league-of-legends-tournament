@@ -18,12 +18,6 @@ export default function BracketPage() {
     [rounds]
   );
 
-  React.useEffect(() => {
-    if (!loading) {
-      console.log('[FLAT MatchUI[]]', flatMatches);
-    }
-  }, [loading, tournament, rounds, error]);
-
   async function handleGenerate() {
     try {
       const res = await postCreateBracketClient({
@@ -31,7 +25,6 @@ export default function BracketPage() {
         seedStrategy: 'registrationOrder',
         bestOf: 1,
       });
-      console.log('[GENERATED]', res);
       await refetch();
     } catch (e: any) {
       console.error(e?.message ?? e);
