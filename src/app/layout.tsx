@@ -15,9 +15,6 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: 'Torneo LoL',
     type: 'website',
-<<<<<<< Updated upstream
-    images: ['/og/site-default.jpg'],
-=======
     images: [
       {
         url: '/android-chrome-192x192.png',
@@ -26,18 +23,13 @@ export const metadata: Metadata = {
         alt: 'Logo Mi Torneo',
       },
     ],
->>>>>>> Stashed changes
     locale: 'es_CO',
   },
   twitter: {
     card: 'summary_large_image',
-<<<<<<< Updated upstream
-    images: ['/og/site-default.jpg'],
-=======
     title: 'Mi Torneo',
     description: 'Organiza, juega y sigue tus torneos fácilmente.',
     images: ['/android-chrome-512x512.png'],
->>>>>>> Stashed changes
   },
   robots: { index: true, follow: true },
 };
