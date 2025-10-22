@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/icon-512x512.png',
+        url: '/android-chrome-512x512.png',
         width: 512,
         height: 512,
         alt: 'Logo Mi Torneo',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Mi Torneo',
     description: 'Organiza, juega y sigue tus torneos fácilmente.',
-    images: ['/icon-512x512.png'],
+    images: ['/android-chrome-512x512.png'],
   },
   robots: { index: true, follow: true },
 };
