@@ -6,7 +6,7 @@ import NavGate from '@/components/NavGate';
 import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://EscenaMuerta.co'), //TODO cambiar al dominio corr
+  metadataBase: new URL('https://tournamen-league-of-legends.netlify.app'), //TODO cambiar al dominio corr
   title: {
     default: 'Torneo LoL',
     template: '%s | Torneo LoL',
@@ -15,12 +15,29 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: 'Torneo LoL',
     type: 'website',
+<<<<<<< Updated upstream
     images: ['/og/site-default.jpg'],
+=======
+    images: [
+      {
+        url: '/android-chrome-192x192.png',
+        width: 512,
+        height: 512,
+        alt: 'Logo Mi Torneo',
+      },
+    ],
+>>>>>>> Stashed changes
     locale: 'es_CO',
   },
   twitter: {
     card: 'summary_large_image',
+<<<<<<< Updated upstream
     images: ['/og/site-default.jpg'],
+=======
+    title: 'Mi Torneo',
+    description: 'Organiza, juega y sigue tus torneos fácilmente.',
+    images: ['/android-chrome-512x512.png'],
+>>>>>>> Stashed changes
   },
   robots: { index: true, follow: true },
 };
