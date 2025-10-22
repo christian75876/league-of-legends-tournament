@@ -18,12 +18,6 @@ export default function BracketPage() {
     [rounds]
   );
 
-  React.useEffect(() => {
-    if (!loading) {
-      console.log('[FLAT MatchUI[]]', flatMatches);
-    }
-  }, [loading, tournament, rounds, error]);
-
   async function handleGenerate() {
     try {
       const res = await postCreateBracketClient({
@@ -31,11 +25,10 @@ export default function BracketPage() {
         seedStrategy: 'registrationOrder',
         bestOf: 1,
       });
-      console.log('[GENERATED]', res);
       await refetch();
-    } catch (e: any) {
-      console.error(e?.message ?? e);
-      alert(e?.message ?? 'No se pudo generar R1');
+    } catch (e: unknown) {
+      console.error(e ?? e);
+      alert(e ?? 'No se pudo generar R1');
     }
   }
 
@@ -74,13 +67,13 @@ export default function BracketPage() {
             maxHeight={isMobile ? undefined : 560}
           />{' '}
         </section>
-        <button
+        {/* <button
           type="button"
           onClick={handleGenerate}
           className="rounded-md border border-white/10 px-3 py-1 text-sm hover:bg-white/10"
         >
           Generar R1 (auto)
-        </button>
+        </button> */}
       </div>
     </main>
   );

@@ -12,12 +12,17 @@ export const metadata: Metadata = {
     template: '%s | Torneo LoL',
   },
   description: 'Torneo de League of Legends. Transmisión en vivo, posiciones y más.',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
   openGraph: {
     siteName: 'Torneo LoL',
     type: 'website',
     images: [
       {
-        url: '/android-chrome-192x192.png',
+        url: '/icon-512x512.png',
         width: 512,
         height: 512,
         alt: 'Logo Mi Torneo',
@@ -29,7 +34,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Mi Torneo',
     description: 'Organiza, juega y sigue tus torneos fácilmente.',
-    images: ['/android-chrome-512x512.png'],
+    images: ['/icon-512x512.png'],
   },
   robots: { index: true, follow: true },
 };
