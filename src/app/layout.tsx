@@ -22,9 +22,9 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/android-chrome-512x512.png',
-        width: 512,
-        height: 512,
+        url: '/og/default.jpg',
+        width: 1200,
+        height: 630,
         alt: 'Logo Mi Torneo',
       },
     ],
